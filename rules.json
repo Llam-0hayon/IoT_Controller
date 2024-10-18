@@ -1,0 +1,22 @@
+[
+                {
+                        "conditions":[
+                           {"topic": "house/temp", "comparison":">", "value":30},
+                           {"topic": "house/presence", "comparison":"==", "value":1}
+                        ],
+                        "action":{"message":"its too hot, turn on ac", "topic":"room/AC", "value":"on"}
+                },
+                {
+                        "conditions":[
+                            {"topic": "house/temp", "comparison":"<", "value":20},
+                            {"topic": "house/presence", "comparison":"==", "value":1}
+                        ],
+                        "action":{"message":"its too cold, turn on heat", "topic":"room/AC", "value":"on"}
+                },
+                {
+                        "conditions":[
+                           {"topic": "house/temp", "comparison":"<", "value": 10}
+                        ],
+                        "action":{"message":"its too cold, turn on heat to keep the pipes from bursting", "topic":"room/AC", "value":"on"}
+                }
+]
