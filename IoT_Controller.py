@@ -63,7 +63,7 @@ class IoT_Controller:
               topic = condition["topic"]
 
               try:
-                  value = IoT_Controller.mqtt_data[topic] #extrct va;ues ffrom shhet of paper
+                  value = IoT_Controller.mqtt_data[topic] #extrct values ffrom shhet of paper
                   condition_met = IoT_Controller.condition_met(value,condition["comparison"],condition["value"]) #if something on sheet of papaer compare then true f conditionis met
 
               except KeyError:
