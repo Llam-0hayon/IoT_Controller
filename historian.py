@@ -1,83 +1,71 @@
 import paho.mqtt.client as mqtt
 import sqlite3
+import json
 from datetime import datetime
 
-#record everything coming over MQTT
-
-#connect to MQTT server
-#Broker settings
-MQTT_BROKER = "localhost"
-MQTT_PORT = 1883
+# configuration of the MQTT system
+MQTT_BROKER = "localhost" #the address of the broker
+MQTT_CLIENT_ID = "historian-client"
 MQTT_TOPIC = "#"
-#client settings
-MQTT_CLIENT_ID = "historian-client" #name of this program to disclose to the broker
+
+# SQLite Database configuration
 DB_FILE = "historian_data.db"
 
-
-#MQTT client callback for connections - runs once at the moment the client connects to the broker
-def on_connect(client, userdata, flag, rc):
-    print("Connected to MQTT")
-    #good time to subscribe
+# MQTT client callback for connection - the method that will be run once connected to the broker
+def on_connect(client, userdata, flags, rc):
+    print("connected to MQTT")
+    # subscribe to the topics
     client.subscribe(MQTT_TOPIC)
 
-#MQTT client callback to handle incoming message
+# MQTT client callback to handle incoming messages
 def on_message(client, userdata, msg):
     print("got a message")
-    #get the value from the message
+    #get the value
     payload = msg.payload.decode()
-    #get the topic from the message
+    #get the topic
     topic = msg.topic
-    #get the current time to log the time when the message came in ... format it as a date i can read
+    #get the timestamp
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    #save this to the database
-    #wait... print for debugging
-    print(topic, payload, timestamp)
+    #save all that to the database as a record
+    save_to_database(topic, payload, timestamp)
 
-def save_to_database(topic, payload, timestamp):
-    #connecting to the database - open the database file
+# method to save to the SQLite3 database
+def save_to_database(topic, value, timestamp):
+    print("saved a message")
+    # connect to the database
     conn = sqlite3.connect(DB_FILE)
-    conn = conn.cursor() # finger to send commands to the database
+    cursor = conn.cursor()
 
-    #make sure that there is a place where we can save the message
-    # SQL (Structured Query Language) is a language to talk to the database
-    SQL = "CREATE TABLE IF NOT EXIST historian_data (topic TEXT, message TEXT, timestamp TEXT)"
+    # make sure the DB table exists and build it otherwise
+    SQL = "CREATE TABLE IF NOT EXISTS historian_data (topic TEXT, payload TEXT, timestamp TEXT)"
     cursor.execute(SQL)
 
-    #save the message
-    SQL =  "INSERT INTO historian_data (topic, payload, timestamp) VALUES (?,?,?)"
-    cursor.execute(SQL,(topic, payload, timestamp))
+    # save the message to the table
+    SQL = "INSERT INTO historian_data (topic, payload, timestamp) VALUES (?,?,?)"
+    cursor.execute(SQL, (topic, value, timestamp))
 
-    #comfirm the writings
+    # confirm the writing and close
     conn.commit()
     conn.close()
 
-
-
-
-
-##...
-#create the MQTT client object
+#setting up the object
 client = mqtt.Client(client_id=MQTT_CLIENT_ID)
 
-#set the callbacks
-#setting the defined on_connect as the actual callback to use upon connnecting
+#setting up the callback methods
 client.on_connect = on_connect
-#set the on_message callback whenever i receive a message
 client.on_message = on_message
-#connect to the server
-client.connect(MQTT_BROKER, MQTT_PORT, 60)
-#start receiving messages
+
+#setting up the connection to the broker
+client.connect(MQTT_BROKER, 1883, 60)
+
+# start the MQTT client loop but let us define further logic
 client.loop_start()
 
 try:
     while True:
-        #logic goes here
+        #more logic goes here
         pass
 
 except KeyboardInterrupt:
-    #disconnect from the MQTT Broker
+    #disconnect the client from the broker
     client.disconnect()
-
-#subscribe to all topics
-#when message come in, store them to a darabase
-
