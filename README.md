@@ -1,3 +1,4 @@
 # IoT_Controller
 IoT controller framework for the fall 24 semester
-I havent commits alot of code since i would initially write the code and have it looked over by my lab partner who would make any necessary changes after testing and only then would he test it. Plus i had less time to use the PI since i dont own it -Alben 
+
+I havent commits alot of code since i would initially write the code and have it looked over by my lab partner who would make any necessary changes after testing and only then would he test it. Plus i had less time to use the PI since i dont own it. We stayed logged in on my lab partners github account on the PI for most of the semester because it was easier for him to stay logged since he was taking the pi home so despite us coding together on the pi it would only show my lab partner uploading it and for the esp 32 say that it was faster to upload code from his laptop to the 32 whenever we where at school and since we almost always worked on the arduino code together at school the code would be commited from his laptop where I’m obviously always gonna be logged in. -Alben 
